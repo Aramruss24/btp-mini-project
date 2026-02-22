@@ -1,0 +1,30 @@
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for ZC_JOB_HEAD_0130 alias JobHeader
+{
+  use create;
+  use update;
+  use delete;
+
+  use action Edit;
+  use action Activate;
+  use action Discard;
+  use action Resume;
+  use action Prepare;
+
+  use association _JobItems { create; with draft; }
+
+  use action acceptOpportunity;
+  use action rejectOpportunity;
+
+}
+
+define behavior for ZC_JOB_ITEM_0130 alias JobItem
+{
+  use update;
+  use delete;
+
+  use association _JobHead { with draft; }
+}

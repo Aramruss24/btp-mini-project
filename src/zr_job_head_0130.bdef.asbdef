@@ -1,0 +1,90 @@
+managed implementation in class zbp_r_job_head_0130 unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZR_JOB_HEAD_0130 alias JobHeader
+persistent table ztb_job_he_0130
+draft table ztb_job_h_0130_d // Tabla espejo para borradores
+lock master
+total etag LastChangedAt
+authorization master ( instance )
+etag master LocalLastChangedAt
+{
+  create ( authorization : global );
+  update;
+  delete;
+
+// --- ACCIONES ESTÁNDAR DEL DRAFT (Borrador) ---
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  // Navegación hacia los hijos (Items) para poder crearlos desde aquí
+  association _JobItems { create; with draft; }
+
+  //Campos de solo lectura
+  field ( numbering : managed, readonly ) JobUuid;
+  field ( readonly ) CreatedBy, CreatedAt, LastChangedBy, LastChangedAt, LocalLastChangedAt;
+
+  //Mapeo: CDS (CamelCase) vs BBDD (snake_case)
+  mapping for ztb_job_he_0130
+    {
+      JobUuid            = job_uuid;
+      JobTitle           = job_title;
+      ClientName         = client_name;
+      Status             = status;
+      ProposalAmount     = proposal_amount;
+      CurrencyCode       = currency_code;
+      CreatedBy          = created_by;
+      CreatedAt          = created_at;
+      LastChangedBy      = last_changed_by;
+      LastChangedAt      = last_changed_at;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+
+// Determinación: Se ejecuta en el momento de crear
+  determination setInitialValues on modify { create; }
+
+  // Validación: Se ejecuta justo antes de guardar en la BD
+  validation validateAmount on save { field ProposalAmount; create; update; }
+
+  // --- ACCIONES  ESPECIFICAS DE NEGOCIO ---
+  // result [1] $self significa que la acción devuelve la misma entidad actualizada
+  action acceptOpportunity result [1] $self;
+  action rejectOpportunity result [1] $self;
+}
+
+define behavior for ZR_JOB_ITEM_0130 alias JobItem
+persistent table ztb_job_it_0130
+draft table ztb_job_i_0130_d // Tabla espejo para borradores
+lock dependent by _JobHead
+authorization dependent by _JobHead
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+
+  association _JobHead { with draft; }
+
+  field ( numbering : managed, readonly ) ItemUuid;
+  field ( readonly ) JobUuid; // Foreign Key, no se toca
+  field ( readonly ) CreatedBy, CreatedAt, LastChangedBy, LastChangedAt, LocalLastChangedAt;
+
+  mapping for ztb_job_it_0130
+    {
+      ItemUuid           = item_uuid;
+      JobUuid            = job_uuid;
+      ItemDescription    = item_description;
+      DueDate            = due_date;
+      Status             = status;
+      CompletionRatio    = completion_ratio;
+      CreatedBy          = created_by;
+      CreatedAt          = created_at;
+      LastChangedBy      = last_changed_by;
+      LastChangedAt      = last_changed_at;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+
+}

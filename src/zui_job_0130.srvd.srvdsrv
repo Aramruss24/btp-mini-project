@@ -1,0 +1,5 @@
+@EndUserText.label: 'Service Definition job'
+define service ZUI_JOB_0130 {
+  expose ZC_JOB_HEAD_0130 as JobHeader;
+  expose ZC_JOB_ITEM_0130 as JobItem;
+}

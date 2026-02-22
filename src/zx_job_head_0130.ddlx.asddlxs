@@ -1,0 +1,64 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Oportunidad',
+    typeNamePlural: 'Oportunidades',
+    title: { type: #STANDARD, value: 'JobTitle' }, // El título grande en la página de detalle
+    description: { type: #STANDARD, value: 'ClientName' } // El subtítulo
+  }
+}
+annotate view ZC_JOB_HEAD_0130 with
+{
+  /* FACETS: Son las pestañas/secciones de la página de detalle.
+     Aquí creamos una sección llamada "Datos Generales" */
+  @UI.facet: [ { id:              'General',
+                 purpose:         #STANDARD,
+                 type:            #IDENTIFICATION_REFERENCE,
+                 label:           'Datos Generales',
+                 position:        10 } ]
+
+  /* CAMPO: ID (Oculto pero clave) */
+  @UI.hidden: true
+  JobUuid;
+
+  /* CAMPO: Título del Puesto */
+  @UI: {
+      lineItem:       [ { position: 10, label: 'Título', importance: #HIGH } ],  // En la tabla
+      identification: [ { position: 10, label: 'Título' } ],                    // En el detalle
+      selectionField: [ { position: 10 } ]                                      // En el filtro
+  }
+  JobTitle;
+
+  /* CAMPO: Cliente */
+  @UI: {
+      lineItem:       [ { position: 20, label: 'Cliente', importance: #HIGH } ],
+      identification: [ { position: 20, label: 'Cliente' } ],
+      selectionField: [ { position: 20 } ]
+  }
+  ClientName;
+
+/* CAMPO: Estado */
+  @UI: {
+      lineItem:       [ { position: 30, label: 'Estado', importance: #MEDIUM },
+                        { type: #FOR_ACTION, dataAction: 'acceptOpportunity', label: 'Aceptar' },
+                        { type: #FOR_ACTION, dataAction: 'rejectOpportunity', label: 'Rechazar' } ],
+      identification: [ { position: 30, label: 'Estado' },
+                        { type: #FOR_ACTION, dataAction: 'acceptOpportunity', label: 'Aceptar' },
+                        { type: #FOR_ACTION, dataAction: 'rejectOpportunity', label: 'Rechazar' } ]
+  }
+  Status;
+  
+  /* CAMPO: Tarifa (Importante: Fiori agrupa número + moneda solo) */
+  @UI: {
+      lineItem:       [ { position: 40, label: 'Tarifa' } ],
+      identification: [ { position: 40, label: 'Tarifa Propuesta' } ]
+  }
+  ProposalAmount;
+
+  /* CAMPO: Fecha de Creación */
+  @UI: {
+      lineItem:       [ { position: 50, label: 'Creado el' } ],
+      identification: [ { position: 50, label: 'Fecha Creación' } ]
+  }
+  CreatedAt;
+}

@@ -1,0 +1,35 @@
+@Metadata.layer: #CORE
+@UI.headerInfo: {
+    typeName: 'Hito',
+    typeNamePlural: 'Hitos',
+    title: { value: 'ItemDescription' }
+}
+annotate view ZC_JOB_ITEM_0130 with
+{
+  @UI.facet: [ { id: 'ItemDetails', 
+                 purpose: #STANDARD, 
+                 type: #IDENTIFICATION_REFERENCE, 
+                 label: 'Detalle del Hito', 
+                 position: 10 } ]
+
+  @UI.hidden: true
+  ItemUuid;
+
+  @UI: {
+      lineItem:       [ { position: 10, label: 'Descripción' } ],
+      identification: [ { position: 10, label: 'Descripción' } ]
+  }
+  ItemDescription;
+
+  @UI: {
+      lineItem:       [ { position: 20, label: 'Fecha Límite' } ],
+      identification: [ { position: 20, label: 'Fecha Límite' } ]
+  }
+  DueDate;
+
+  @UI: {
+      lineItem:       [ { position: 30, label: 'Avance %', type: #AS_DATAPOINT } ],
+      identification: [ { position: 30, label: 'Porcentaje Avance' } ]
+  }
+  CompletionRatio;
+}
